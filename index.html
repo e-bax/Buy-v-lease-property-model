@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>472 Hargreaves Street | Investment Decision Model</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.5); }
+    input[type=range] { accent-color: #2563eb; }
+    .excel-cell-input { background-color: #EFF6FF; border: 1px solid #BFDBFE; font-weight: 600; color: #1E3A8A; }
+    .excel-cell-calc { background-color: #F8FAFC; border: 1px solid #E2E8F0; }
+    .excel-cell-total { background-color: #E2EFDA; border: 1px solid #A9D08E; font-weight: 700; color: #1E4620; }
+
+    body {font-family:Arial, sans-serif;}
+    #base-brief {max-width:1100px;margin:auto;color:#172b42;font-size:16px;line-height:1.6;}
+    .brief-hero {background:#142c42;color:#fff;border-radius:20px;padding:32px 36px;}
+    .brief-kicker {font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#bdd4e5;}
+    .brief-hero h2 {font-size:28px;line-height:1.25;margin:12px 0;}
+    .brief-number {font-size:52px;font-weight:700;letter-spacing:-2px;line-height:1.15;margin:14px 0 6px;}
+    .brief-subtitle {color:#d7e6ef;max-width:70ch;margin-top:16px;}
+    .brief-tags {display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;}
+    .brief-tags span {border:1px solid #4a6175;border-radius:7px;padding:5px 10px;font-size:13px;}
+    .brief-metrics,.brief-columns {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px;}
+    .brief-card {padding:24px;background:#fff;border:1px solid #dbe4ec;border-radius:14px;}
+    .brief-card h3 {font-size:16px;font-weight:700;margin:0 0 8px;}
+    .brief-card strong {display:block;font-size:28px;line-height:1.3;margin:8px 0;}
+    .brief-card p {font-size:15px;color:#475569;}
+    .brief-negative {color:#a33828;}
+    .brief-positive {color:#12614c;}
+    .brief-columns {grid-template-columns:1fr 1fr;}
+    .brief-row {display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid #e5eaf0;}
+    .brief-row b {white-space:nowrap;}
+    .brief-note {margin-top:16px;font-size:14px!important;}
+    .brief-caution {background:#fff7e8;border-left:4px solid #c18a28;padding:20px 24px;margin:24px 0;border-radius:4px 12px 12px 4px;}
+    .brief-caution h3 {font-weight:700;margin-bottom:6px;}
+    .brief-questions {margin:28px 0;}
+    .brief-questions h2,.brief-settings h2 {font-size:22px;font-weight:700;margin:0 0 8px;}
+    .brief-questions details,.brief-settings>details {border:1px solid #dbe4ec;border-radius:12px;background:white;margin:10px 0;overflow:hidden;}
+    .brief-questions summary,.brief-settings>details>summary {padding:20px 24px;font-size:16px;font-weight:600;cursor:pointer;line-height:1.45;}
+    .brief-questions details p {padding:0 24px 24px;max-width:85ch;color:#475569;line-height:1.75;}
+    .brief-settings {max-width:1100px;margin:32px auto;font-size:16px;line-height:1.6;}
+    .brief-settings>p {color:#475569;margin-bottom:18px;}
+    .brief-settings label {font-size:14px;line-height:1.5;}
+    summary:focus-visible,button:focus-visible {outline:3px solid #3b82f6;outline-offset:-3px;}
+    @media(max-width:700px){.brief-hero{padding:24px}.brief-hero h2{font-size:24px}.brief-number{font-size:42px}.brief-metrics,.brief-columns{grid-template-columns:1fr}.brief-card{padding:20px}header nav{max-width:100%;overflow-x:auto;white-space:nowrap}header{position:static!important}.brief-questions summary{padding:18px}.brief-row{font-size:14px}}
+
+/* A single, restrained visual hierarchy. */
+body {background:#f7f8fa!important;color:#243444;font-family:Arial,sans-serif!important;}
+header {background:#fff!important;color:#243444!important;position:relative!important;box-shadow:none!important;border-bottom:1px solid #e1e5e9!important;}
+header h1 {color:#243444!important;font-size:18px!important;}
+header p {color:#65717d!important;}
+header>div {max-width:1040px!important;}
+main {max-width:1040px!important;}
+.simple-nav {display:flex;align-items:center;gap:4px;font-size:14px;overflow:visible!important;}
+.simple-nav button,.nav-more summary {padding:9px 12px;border-radius:6px;color:#526171!important;cursor:pointer;font-weight:500;white-space:nowrap;}
+.simple-nav button.bg-blue-600 {background:#e9eff7!important;color:#174f87!important;box-shadow:none!important;}
+.nav-more {position:relative;}.nav-more>div {position:absolute;right:0;top:44px;z-index:60;background:white;border:1px solid #dde3e9;border-radius:8px;padding:6px;min-width:180px;box-shadow:0 5px 15px #162b4012;}.nav-more button{display:block;width:100%;text-align:left;}
+#base-brief {max-width:760px;padding:12px 0;}
+.simple-heading h2 {font-size:28px;font-weight:600;line-height:1.3;margin:12px 0;}
+.brief-kicker {color:#617488;font-size:12px;letter-spacing:.06em;}
+.brief-number {font-size:52px;color:#193f60;margin:12px 0 4px;}
+.simple-heading>p:not(.brief-kicker) {color:#526171;}
+.simple-context {font-size:14px;margin-top:18px!important;max-width:65ch;}
+.simple-cash {margin-top:30px;border-top:1px solid #dce2e8;padding-top:22px;}
+.simple-cash h3 {font-size:15px;font-weight:600;}
+.brief-metrics {grid-template-columns:1fr 1fr;margin-top:12px;gap:30px;}
+.brief-card {background:transparent;border:0;border-radius:0;padding:0;}
+.brief-card h3{font-size:14px;color:#526171;font-weight:400;margin:0;}
+.brief-card strong{font-size:26px;margin:4px 0;}
+.brief-card p{font-size:13px;}
+.simple-caveat {font-size:14px;color:#617080;margin:22px 0;max-width:68ch;}
+.simple-actions {display:flex;gap:12px;flex-wrap:wrap;margin:24px 0;}
+.simple-actions button {padding:11px 16px;border:1px solid #cfd9e2;border-radius:6px;font-size:14px;cursor:pointer;}
+.simple-actions button:first-child {background:#225681;color:white;border-color:#225681;}
+.brief-questions{margin-top:28px;}.brief-questions details{border:0;border-top:1px solid #dce2e8;border-radius:0;background:transparent;margin:0;}.brief-questions summary{padding:17px 0;font-size:15px;font-weight:500;}
+.simple-detail{padding:0 0 20px;}.simple-detail p{padding:14px 0 0!important;font-size:13px;}.brief-row{font-size:14px;}
+.simple-help{list-style:decimal;padding-left:24px;line-height:1.7;margin:24px 0;}.simple-help li{margin:16px 0;}
+.simple-footer{font-size:12px;color:#77818b;text-align:center;padding:24px;border-top:1px solid #e1e5e9;}
+#content-assumptions .brief-settings {margin-top:0;}
+@media(max-width:700px){header>div{gap:12px!important}.simple-nav{width:100%;justify-content:space-between}.simple-nav button,.nav-more summary{padding:8px;font-size:13px}.brief-number{font-size:44px}.simple-heading h2{font-size:25px}.brief-metrics{gap:16px}.brief-row{gap:12px}.simple-detail .brief-row span{max-width:65%}#content-assumptions .grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          
+          <h1 class="text-xl font-bold tracking-tight text-white">472 Hargreaves Street</h1>
+        </div>
+        <p class="text-xs text-slate-400 mt-0.5">Buy or rent · 10-year comparison</p>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="simple-nav" aria-label="Model pages">
+<button onclick="switchTab('brief')" id="tab-brief" class="nav-btn bg-blue-600 text-white">Summary</button>
+<button onclick="switchTab('simulator')" id="tab-simulator" class="nav-btn">Simulator</button>
+<button onclick="switchTab('assumptions')" id="tab-assumptions" class="nav-btn">Assumptions</button>
+<details class="nav-more"><summary>More</summary><div>
+<button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn">Compare prices</button>
+<button onclick="switchTab('buy')" id="tab-buy" class="nav-btn">Buying workings</button>
+<button onclick="switchTab('rent')" id="tab-rent" class="nav-btn">Renting workings</button>
+<button onclick="switchTab('guide')" id="tab-guide" class="nav-btn">How to use</button>
+</div></details></nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: DECISION BRIEF (Cover & Core Questions) -->
+    <!-- ========================================================================= -->
+    <section id="content-brief" class="tab-content block space-y-6"><div id="base-brief"></div><noscript>This model requires JavaScript to calculate purchase GST, acquisition funding and revised outcomes.</noscript></section>
+
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: COMPARISON DASHBOARD -->
+    <!-- ========================================================================= -->
+    <section id="content-dashboard" class="tab-content hidden space-y-6"><div id="base-dashboard"></div></section>
+
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: PROPERTY CALCULATIONS (Excel-Style Inputs & Outputs) -->
+    <!-- ========================================================================= -->
+    <section id="content-buy" class="tab-content hidden space-y-6">
+      
+<div id="base-property"></div>
+      <!-- Year-by-Year Property Schedule Table -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        <div class="bg-slate-100/80 px-6 py-3.5 border-b border-slate-200 flex justify-between items-center">
+          <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">Property 10-Year Annual Calculation Schedule ($590k Scenario)</h4>
+          <span class="text-[11px] text-slate-500">All figures in nominal AUD</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-900 text-white font-semibold">
+                <th class="py-2.5 px-3 text-center">Year</th>
+                <th class="py-2.5 px-3 text-right">Property Value</th>
+                <th class="py-2.5 px-3 text-right">Home Debt</th>
+                <th class="py-2.5 px-3 text-right">Secondary Debt</th>
+                <th class="py-2.5 px-3 text-right">External Rent</th>
+                <th class="py-2.5 px-3 text-right">Cash allocated (opex + reserve)</th>
+                <th class="py-2.5 px-3 text-right">Total Interest</th>
+                <th class="py-2.5 px-3 text-right">Principal Repaid</th>
+                <th class="py-2.5 px-3 text-right">Net Cash Flow</th>
+                <th class="py-2.5 px-3 text-right">Equities Balance</th>
+                <th class="py-2.5 px-3 text-right bg-emerald-900 text-emerald-200 font-bold">Property Net Wealth</th>
+              </tr>
+            </thead>
+            <tbody id="property-tbody" class="divide-y divide-slate-100">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: RENTING CALCULATIONS (Excel-Style Inputs & Outputs) -->
+    <!-- ========================================================================= -->
+    <section id="content-rent" class="tab-content hidden space-y-6">
+      
+      <!-- Rent Inputs / Outputs Split -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Inputs Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+          <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              Renting & Equities Inputs
+            </h3>
+            <span class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded border border-blue-200">BLUE = INPUT</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Cash Invested in Equities</span>
+              <span>$400,000</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Existing Equities Invested</span>
+              <span>$80,000</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Total Starting Equities Portfolio</span>
+              <span>$480,000</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Equities Annual Total Return</span>
+              <span>6.00% p.a.</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Consulting Room Rent (Own Practice)</span>
+              <span>$300 + GST / week</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Annual Consulting Rent (Year 1)</span>
+              <span>$15,600 / year</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Room Rent Escalation Rate</span>
+              <span>3.00% p.a.</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Home Redraw Used</span>
+              <span>$0 (No Debt)</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Secondary Loan Used</span>
+              <span>$0 (No Debt)</span>
+            </div>
+            <div class="flex justify-between py-1.5 px-2.5 rounded excel-cell-input">
+              <span>Investment Horizon</span>
+              <span>10 Years</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculated Summary Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4 lg:col-span-2">
+          <div class="border-b border-slate-200 pb-3 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+              Renting Portfolio Compounding Outputs
+            </h3>
+            <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded border border-slate-200">FORMULA OUTPUTS</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span class="text-slate-500 font-medium">Year 0 Starting Net Wealth</span>
+              <p class="text-lg font-bold text-slate-900">$480,000</p>
+              <p class="text-[11px] text-slate-500">$400k Cash + $80k Equities (Identical to Buy)</p>
+            </div>
+
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span class="text-slate-500 font-medium">Total Rent Paid Over 10 Years (ex GST)</span>
+              <p class="text-lg font-bold text-rose-600">$178,837</p>
+              <p class="text-[11px] text-slate-500">$15,600 in Year 1 escalating at 3.0% annually</p>
+            </div>
+
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span class="text-slate-500 font-medium">Total Investment Returns Generated</span>
+              <p class="text-lg font-bold text-blue-600">+$326,039</p>
+              <p class="text-[11px] text-slate-500">Portfolio compounding @ 6.0% net of rent deductions</p>
+            </div>
+
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+              <span class="text-slate-500 font-medium">Total Liabilities / Debt</span>
+              <p class="text-lg font-bold text-slate-900">$0</p>
+              <p class="text-[11px] text-slate-500">Zero debt, zero personal guarantees, complete liquidity</p>
+            </div>
+          </div>
+
+          <div class="p-4 bg-blue-50 border border-blue-300 rounded-xl flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-blue-900 uppercase">10-Year Renting Terminal Net Wealth</p>
+              <p class="text-xs text-blue-700 mt-0.5">$480k portfolio compounded @ 6% less annual rent payments</p>
+            </div>
+            <p class="text-2xl font-extrabold text-blue-900">$627,203</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Year-by-Year Renting Schedule Table -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        <div class="bg-slate-100/80 px-6 py-3.5 border-b border-slate-200 flex justify-between items-center">
+          <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">Renting & Equities 10-Year Annual Compounding Schedule</h4>
+          <span class="text-[11px] text-slate-500">All figures in nominal AUD</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-900 text-white font-semibold">
+                <th class="py-2.5 px-4 text-center">Year</th>
+                <th class="py-2.5 px-4 text-right">Opening Portfolio</th>
+                <th class="py-2.5 px-4 text-right">Investment Return (6.0%)</th>
+                <th class="py-2.5 px-4 text-right">Room Rent Paid (ex GST; starts $300/wk)</th>
+                <th class="py-2.5 px-4 text-right">Net Annual Growth</th>
+                <th class="py-2.5 px-4 text-right bg-blue-900 text-blue-200 font-bold">Closing Portfolio / Net Wealth</th>
+              </tr>
+            </thead>
+            <tbody id="rent-tbody" class="divide-y divide-slate-100">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: LIVE SIMULATOR -->
+    <!-- ========================================================================= -->
+    <section id="content-simulator" class="tab-content hidden space-y-6">
+      
+      <!-- Interactive Controls Card -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-6">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Interactive Scenario Sandbox</h3>
+          <p class="text-xs text-slate-500">Drag the sliders to test how occupancy, room rent, and market returns impact your 10-year wealth advantage in real time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-50 p-5 rounded-xl border border-slate-200/80">
+          
+          <!-- Slider 1: Purchase Price -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Purchase Price</span>
+              <span id="val-price" class="text-blue-600 font-bold">$590,000</span>
+            </div>
+            <input type="range" id="input-price" min="580000" max="600000" step="10000" value="590000" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>$580k (Lower)</span>
+              <span>$590k (Central)</span>
+              <span>$600k (Upper)</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: Stabilised Occupancy -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Stabilised Occupancy</span>
+              <span id="val-occ" class="text-blue-600 font-bold">80%</span>
+            </div>
+            <input type="range" id="input-occ" min="40" max="100" step="5" value="80" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>50% (Ramp-up)</span>
+              <span>80% (Realistic)</span>
+              <span>100% (Full)</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: Headline Room Rent -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Headline Room Rent (ex GST)</span>
+              <span id="val-rent" class="text-blue-600 font-bold">$300 / wk</span>
+            </div>
+            <input type="range" id="input-rent" min="280" max="400" step="10" value="300" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>$290 (Bare)</span>
+              <span>$300 (All-inc)</span>
+              <span>$375 (RYSE)</span>
+            </div>
+          </div>
+
+<div class="space-y-1.5"><div class="flex justify-between text-xs font-semibold"><span class="text-slate-700">Own Practice Rent (ex GST / week)</span><span id="val-ownrent" class="text-blue-600 font-bold">300 + GST</span></div><input type="range" id="input-ownrent" min="200" max="450" step="10" value="300" class="w-full"></div>
+<div class="space-y-1.5"><div class="flex justify-between text-xs font-semibold"><span class="text-slate-700">Annual Rent Growth (both rental streams)</span><span id="val-growth" class="text-blue-600 font-bold">3% p.a.</span></div><input type="range" id="input-growth" min="0" max="6" step="0.5" value="3" class="w-full"></div>
+<div class="space-y-1.5 text-xs"><label for="input-gst" class="font-semibold text-slate-700">GST on own practice rent</label><select id="input-gst" class="w-full rounded border border-slate-300 p-2"><option value="yes">Recoverable: net cost excludes GST</option><option value="no">Unrecoverable: include 10% GST in cost</option></select><p class="text-slate-500">External rental income excludes GST collected.</p></div>
+          <!-- Slider 4: Property Appreciation -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Property Appreciation</span>
+              <span id="val-apprec" class="text-blue-600 font-bold">2.75% p.a.</span>
+            </div>
+            <input type="range" id="input-apprec" min="0" max="5" step="0.25" value="2.75" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>1.0% (Subdued)</span>
+              <span>2.75% (CPI Parity)</span>
+              <span>4.0% (Growth)</span>
+            </div>
+          </div>
+
+          <!-- Slider 5: Equities Return -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Equities Total Return (Opportunity Cost)</span>
+              <span id="val-eq" class="text-blue-600 font-bold">6.0% p.a.</span>
+            </div>
+            <input type="range" id="input-eq" min="3" max="11" step="0.5" value="6.0" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>4.0% (Bear)</span>
+              <span>6.0% (Base)</span>
+              <span>8.0% (Historical)</span>
+            </div>
+          </div>
+
+          <!-- Slider 6: Secondary Private Loan Rate -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-slate-700">Secondary Private Loan Interest</span>
+              <span id="val-sec" class="text-blue-600 font-bold">1.0% p.a.</span>
+            </div>
+            <input type="range" id="input-sec" min="0" max="8" step="0.5" value="1.0" class="w-full">
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>1.0% (Concessional)</span>
+              <span>4.0% (Mid)</span>
+              <span>7.0% (Commercial)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Live Output Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div class="bg-slate-900 text-white p-5 rounded-xl">
+            <p class="text-xs text-slate-400 font-semibold uppercase">10-Year Buy Terminal Wealth</p>
+            <p id="sim-buy-nw" class="text-2xl font-bold mt-1 text-white">$795,120</p>
+            <p id="sim-buy-sub" class="text-xs text-slate-400 mt-1">Property: $754k | Equities: $172k | Debt: $130k</p>
+          </div>
+
+          <div class="bg-slate-900 text-white p-5 rounded-xl">
+            <p class="text-xs text-slate-400 font-semibold uppercase">10-Year Rent Terminal Wealth</p>
+            <p id="sim-rent-nw" class="text-2xl font-bold mt-1 text-slate-200">$627,203</p>
+            <p class="text-xs text-slate-400 mt-1">$480k portfolio compounding net of rent</p>
+          </div>
+
+          <div id="sim-card-diff" class="bg-emerald-600 text-white p-5 rounded-xl transition">
+            <p class="text-xs text-emerald-100 font-semibold uppercase">Net Advantage Over Renting</p>
+            <p id="sim-diff-val" class="text-3xl font-extrabold mt-1">+$167,918</p>
+            <p id="sim-diff-verdict" class="text-xs text-emerald-100 mt-1">Purchasing outperforms renting</p>
+          </div>
+        </div>
+
+        <!-- Dynamic Sensitivity Bar -->
+        <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 leading-relaxed">
+          <span class="font-bold">Live Model Analysis:</span> 
+          <span id="sim-analysis-text">Loading acquisition-aware scenario analysis…</span>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section id="content-guide" class="tab-content hidden"><div class="brief-settings"><h2>How to use</h2><ol class="simple-help"><li><b>Summary</b> shows the base case.</li><li><b>Simulator</b> lets you try a different scenario. Its sliders affect that page only.</li><li><b>Assumptions</b> changes shared costs, GST and workload across the model.</li><li><b>More</b> contains the detailed workings and price comparison.</li></ol><p>Results update as you type. Refreshing restores defaults. HTML and Excel do not sync.</p></div></section>
+<section id="content-assumptions" class="tab-content hidden"><div class="brief-settings"><h2>Shared assumptions</h2><p>Changes here apply to the summary and simulator.</p><details><summary>Acquisition costs &amp; purchase GST</summary><div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-4"><h3 class="text-lg font-bold">Acquisition costs &amp; purchase GST</h3><p class="text-sm text-slate-600">Provisional assumption: purchase price is exclusive of 10% GST. Vacant possession does not confirm the contract's GST treatment. The six allocations below are editable budget placeholders, not quotes or calculated duty. They preserve the prior $45,000 allowance; GST on the property is additional.</p><div class="grid grid-cols-2 lg:grid-cols-3 gap-4"><label class="block text-xs text-slate-700">Transfer duty allowance — confirm with conveyancer<input id="acq-duty" type="number" min="0" max="1000000" step="100" value="30000" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Legal / conveyancing allowance<input id="acq-legal" type="number" min="0" max="1000000" step="100" value="3000" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Inspection / due diligence allowance<input id="acq-inspection" type="number" min="0" max="1000000" step="100" value="1500" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Loan establishment / valuation allowance<input id="acq-finance" type="number" min="0" max="1000000" step="100" value="1000" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Fit-out / initial repairs allowance<input id="acq-fitout" type="number" min="0" max="1000000" step="100" value="7000" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Contingency allowance<input id="acq-contingency" type="number" min="0" max="1000000" step="100" value="2500" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs">Purchase GST basis<select id="acq-basis" class="block w-full mt-1 p-2 border rounded"><option value="plus">Price plus 10% GST — provisional base case</option><option value="inclusive">Price includes GST</option><option value="none">No purchase GST / GST-free — only if confirmed</option></select></label><label class="block text-xs">Purchase GST credit assumed<select id="acq-credit" class="block w-full mt-1 p-2 border rounded"><option value="100">100% recoverable — unconfirmed assumption</option><option value="0">0% recoverable</option><option value="50">50% recoverable — test mixed use</option></select></label><label class="block text-xs text-slate-700">GST recovery delay (months, within Year 1)<input id="acq-months" type="number" min="0" max="12" step="1" value="3" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">GST bridge interest (% p.a.)<input id="acq-bridge" type="number" min="0" max="30" step="0.25" value="7" class="block w-full mt-1 p-2 rounded excel-cell-input"></label></div><div id="acq-summary" class="bg-blue-50 rounded-xl p-4 text-sm"></div><p class="text-xs text-slate-500">Ancillary allowances are net permanent costs; credits on those fees are not separately modelled. Transfer duty is a manual allowance: confirm the dutiable value including any GST, regional concession eligibility, and the property's commercial and industrial property tax status. Land tax / future CIPT must fit the operating allowance or be added in a later revision.</p><p class="text-xs"><a class="text-blue-700 underline" href="https://sro.vic.gov.au/buying-property/land-transfer-stamp-duty/land-transfer-stamp-duty-calculator" target="_blank" rel="noopener">SRO duty calculator</a> · <a class="text-blue-700 underline" href="https://sro.vic.gov.au/businesses-and-organisations/commercial-and-industrial-property-tax/understanding-commercial-and-industrial-property-tax" target="_blank" rel="noopener">SRO commercial-property tax</a> · <a class="text-blue-700 underline" href="https://www.ato.gov.au/api/public/content/0-184b2878-2f88-4d62-b42c-c1bb1b5f08a0" target="_blank" rel="noopener">ATO property GST guidance</a></p></div></details><details><summary>Capex reserves &amp; management time</summary><div class="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 my-6"><h3 class="text-lg font-bold">Capex reserve &amp; workload assumptions</h3><p class="text-sm text-slate-600">The base case still funds $4,000 of capex each year, increasing 3%. The default assumes it is all spent. A lower spend percentage retains the unspent amount as a separate cash reserve included in net wealth. Cash after reserve funding is unchanged. The renting alternative remains $300/week plus GST.</p><div class="grid grid-cols-2 lg:grid-cols-4 gap-4"><label class="block text-xs text-slate-700">Capex allocation actually spent (%)<input id="component-spent" type="number" value="100" min="0" max="100" step="5" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Retained reserve return (% p.a.)<input id="component-reserve-return" type="number" value="0" min="0" max="10" step="0.25" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Management hours per week<input id="component-hours" type="number" value="0" min="0" max="40" step="0.5" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Value of your time ($/hour)<input id="component-hour-value" type="number" value="100" min="0" max="1000" step="10" class="block w-full mt-1 p-2 rounded excel-cell-input"></label><label class="block text-xs text-slate-700">Management weeks per year<input id="component-time-weeks" type="number" value="48" min="0" max="52" step="1" class="block w-full mt-1 p-2 rounded excel-cell-input"></label></div><p class="text-xs text-slate-500">Management time is an optional economic cost, not a cash payment or tax deduction. Zero hours means workload is not valued in the base case. The separate adjusted result compounds that annual time value at the equity-return assumption.</p><div id="component-results" class="bg-blue-50 rounded-xl p-4 text-sm"></div><details class="text-xs"><summary class="font-semibold cursor-pointer">Component schedule — central base case</summary><div id="component-schedule" class="overflow-x-auto mt-3"></div></details><p class="text-xs text-amber-900">Still unconfirmed: GST-credit eligibility, transfer duty / CIPT status, cost quotes, building condition and leasing demand. Income tax, capital gains tax, depreciation benefits and small-business CGT concessions are not calculated. No tax saving is assumed. These are deterministic scenarios, not a quantified risk-adjusted return.</p></div></details></div>
+</section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="simple-footer">AUD · Before tax · Assumptions require confirmation</footer>
+
+  <!-- Simulation Logic & Interactive Script -->
+  <script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-more').forEach(el => el.open=false);
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-300');
+      });
+
+      const target = document.getElementById('content-' + tabId);
+      const activeBtn = document.getElementById('tab-' + tabId);
+      if (target) target.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+        activeBtn.classList.remove('text-slate-300');
+      }
+    }
+
+    // Annual nominal, before-tax simulation with separate purchase GST funding
+    function simulate(purchasePrice, occStabilised, roomRate, propGrowth, eqReturn, secRate, ownRoomRate = 300, rentGrowth = 0.03, gstRecoverable = true, acquisition = readAcquisition()) {
+      const cash = 400000;
+      const homeDebtInit = 130000;
+      const eqInit = 80000;
+      const c = {spentFraction:1,reserveReturn:0,hours:0,hourValue:100,timeWeeks:48,...acquisition.components};
+      let reserveBalance=0, managementCostFv=0;
+      const pCost = acquisition.total;
+      const purchaseGst = acquisition.basis === 'plus' ? purchasePrice * .10 : acquisition.basis === 'inclusive' ? purchasePrice / 11 : 0;
+      const assetPrice = acquisition.basis === 'inclusive' ? purchasePrice - purchaseGst : purchasePrice;
+      const grossPrice = assetPrice + purchaseGst;
+      const gstCredit = purchaseGst * acquisition.credit;
+      const bridgeInit = gstCredit;
+      const permanentGst = purchaseGst - gstCredit;
+      const secInit = Math.max(0, assetPrice + permanentGst + pCost - cash - homeDebtInit);
+      const bridgeInterest = bridgeInit * acquisition.bridgeRate * acquisition.months / 12;
+      const funding = {assetPrice, grossPrice, purchaseGst, gstCredit, permanentGst, bridgeInit, bridgeInterest, costs:pCost, settlement: grossPrice + pCost, permanentLoan: secInit, totalLoan: secInit + bridgeInit};
+      const ownRentWk = ownRoomRate;
+      const opex = 12000;
+      const capex = 4000;
+      const sellCostPct = 0.025;
+      const secTerm = 10;
+      const expInflation = 0.03;
+      const rHome = 0.07;
+      const rSec = secRate;
+
+      let pVal = assetPrice;
+      let hDebt = homeDebtInit;
+      let sDebt = secInit;
+      let buyEq = eqInit;
+      let rentEq = cash + eqInit;
+      let trajectory = [];
+
+      trajectory.push({
+        year: 0,
+        pVal: pVal,
+        hDebt: hDebt,
+        sDebt: sDebt + bridgeInit,
+        totDebt: hDebt + sDebt + bridgeInit,
+        reserveContribution:0, capexSpent:0, reserveBalance:0, actualCosts:0, managementTimeCost:0, managementCostFv:0, adjustedDiff:assetPrice-homeDebtInit-secInit+eqInit-480000,
+        roomRev: 0,
+        costs: 0,
+        interest: 0,
+        prin: 0,
+        buyCf: 0,
+        buyEq: buyEq,
+        buyNw: pVal - hDebt - sDebt - bridgeInit + buyEq + gstCredit,
+        rentPaid: 0,
+        rentEq: rentEq,
+        rentNw: rentEq,
+        diff: (pVal - hDebt - sDebt - bridgeInit + buyEq + gstCredit) - rentEq
+      });
+
+      for (let y = 1; y <= 10; y++) {
+        pVal *= (1 + propGrowth);
+        const interest = (hDebt * rHome) + (sDebt * rSec) + (y === 1 ? bridgeInterest : 0);
+        const sPrin = secInit / secTerm;
+        sDebt = Math.max(0, sDebt - sPrin);
+
+        const occ = (y === 1) ? 0.50 : occStabilised;
+        const roomRev = 3 * roomRate * 52 * occ * Math.pow(1 + rentGrowth, y - 1);
+        const ownRent = ownRentWk * 52 * Math.pow(1 + rentGrowth, y - 1) * (gstRecoverable ? 1 : 1.10);
+        const costs = (opex + capex) * Math.pow(1 + expInflation, y - 1);
+
+        const reserveContribution=capex*Math.pow(1+expInflation,y-1);
+        const capexSpent=reserveContribution*c.spentFraction;
+        reserveBalance=reserveBalance*(1+c.reserveReturn)+reserveContribution-capexSpent;
+        const actualCosts=opex*Math.pow(1+expInflation,y-1)+capexSpent;
+        const managementTimeCost=c.hours*c.hourValue*c.timeWeeks*Math.pow(1+expInflation,y-1);
+        managementCostFv=managementCostFv*(1+eqReturn)+managementTimeCost;
+        const buyCf = roomRev - costs - interest - sPrin;
+        buyEq = buyEq * (1 + eqReturn) + buyCf;
+        rentEq = rentEq * (1 + eqReturn) - ownRent;
+
+        const sellCost = (y === 10) ? (pVal * sellCostPct) : 0;
+        const buyNw = pVal - hDebt - sDebt + buyEq + reserveBalance - sellCost;
+        const rentNw = rentEq;
+
+        trajectory.push({
+          year: y,
+          pVal: pVal,
+          hDebt: hDebt,
+          sDebt: sDebt,
+          totDebt: hDebt + sDebt,
+          reserveContribution,capexSpent,reserveBalance,actualCosts,managementTimeCost,managementCostFv,adjustedDiff:buyNw-rentNw-managementCostFv,
+          roomRev: roomRev,
+          costs: costs,
+          interest: interest,
+          prin: sPrin,
+          buyCf: buyCf,
+          buyEq: buyEq,
+          buyNw: buyNw,
+          rentPaid: ownRent,
+          rentEq: rentEq,
+          rentNw: rentNw,
+          diff: buyNw - rentNw
+        });
+      }
+
+      return {
+        adjustedDiff:trajectory[10].adjustedDiff,
+        funding: funding,
+        buyNw: trajectory[10].buyNw,
+        rentNw: trajectory[10].rentNw,
+        diff: trajectory[10].diff,
+        trajectory: trajectory
+      };
+    }
+
+
+    function readAcquisition() {
+      const num = id => { const el = document.getElementById('acq-' + id); const n = Number(el.value); return Number.isFinite(n) ? Math.max(0, Math.min(Number(el.max || 1000000), n)) : 0; };
+      return { total: ['duty','legal','inspection','finance','fitout','contingency'].reduce((sum,id)=>sum+num(id),0), basis: document.getElementById('acq-basis').value, credit: Number(document.getElementById('acq-credit').value)/100, months:num('months'), bridgeRate:num('bridge')/100, components:readComponents() };
+    }
+    function readComponents() {
+      const num=id=>{const el=document.getElementById('component-'+id); return Math.max(0,Math.min(Number(el.max),Number(el.value)||0));};
+      return {spentFraction:num('spent')/100,reserveReturn:num('reserve-return')/100,hours:num('hours'),hourValue:num('hour-value'),timeWeeks:num('time-weeks')};
+    }
+    function renderComponents(r) {
+      const c=readComponents(),money=n=>'$'+Math.round(n).toLocaleString('en-AU'),t=r.trajectory,ten=t[10];
+      document.getElementById('component-results').innerHTML='<strong>Central scenario — before tax</strong><p>Ten-year capex funding '+money(t.reduce((s,x)=>s+x.reserveContribution,0))+'; actual capex spent '+money(t.reduce((s,x)=>s+x.capexSpent,0))+'; retained reserve '+money(ten.reserveBalance)+' at Year 10, included once in buying wealth.</p><p>Management-time value in Year 1: '+money(t[1].managementTimeCost)+'. Terminal value of those annual costs: '+money(ten.managementCostFv)+'. Buying advantage after this economic adjustment versus weekly-room renting: '+money(r.adjustedDiff)+'.</p><p>Reference only: $400,000 compounded at 6% earns '+money(400000*(Math.pow(1.06,10)-1))+' over ten years. The main comparison already includes this opportunity cost; it is not deducted again.</p>';
+      document.getElementById('component-schedule').innerHTML='<table class="w-full text-right"><thead><tr>'+['Year','Reserve funded','Capex spent','Reserve balance','Actual costs','Management-time cost'].map(x=>'<th class="p-2">'+x+'</th>').join('')+'</tr></thead><tbody>'+t.map(x=>'<tr class="border-t"><td class="p-2">'+x.year+'</td>'+[x.reserveContribution,x.capexSpent,x.reserveBalance,x.actualCosts,x.managementTimeCost].map(v=>'<td class="p-2">'+money(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+    }
+    function refreshBase() {
+      const a=readAcquisition(), run=(p=590000,o=.8,g=.0275,e=.06,i=.01,rg=.03)=>simulate(p,o,300,g,e,i,300,rg,true,a);
+      const r=run(), t=r.trajectory, f=r.funding;
+      renderComponents(r);
+      const money=n=>'$'+Math.round(n).toLocaleString('en-AU'), signed=n=>(n>=0?'+':'-')+money(Math.abs(n));
+      const low=run(590000,0), high=run(590000,1), wealth=(0-low.diff)/(high.diff-low.diff);
+      const cash=(t[2].costs+t[2].interest+t[2].prin)/(3*300*52*1.03), pct=n=>(n*100).toFixed(1)+'%';
+      const subsidy=r.diff-run(590000,.8,.0275,.06,.07).diff;
+      let elo=.03,ehi=.15;for(let k=0;k<60;k++){let mid=(elo+ehi)/2;if(run(590000,.8,.0275,mid).diff>0)elo=mid;else ehi=mid;}
+      const metric=(title,value,note)=>'<article class="brief-card"><h3>'+title+'</h3><strong class="'+(value<0?'brief-negative':'brief-positive')+'">'+signed(value)+'</strong><p>'+note+'</p></article>';
+      const line=(label,value)=>'<div class="brief-row"><span>'+label+'</span><b>'+value+'</b></div>';
+      document.getElementById('base-brief').innerHTML=`
+        <div class="simple-heading"><p class="brief-kicker">Base case · before tax</p><h2>${r.diff>=0?'Buying finishes ahead':'Renting finishes ahead'}</h2><div class="brief-number">${money(Math.abs(r.diff))}</div><p>more projected wealth after 10 years</p><p class="simple-context">$590,000 purchase · $300/week + GST for both rents · 80% occupancy from Year 2</p></div>
+        <div class="simple-cash"><h3>Cash left after costs and repayments</h3><div class="brief-metrics">${metric('Year 1',t[1].buyCf,'Includes GST bridge interest.')}${metric('Year 2',t[2].buyCf,'At stabilised occupancy.')}</div></div>
+        <p class="simple-caveat">Wealth is not spendable annual income. Tax, GST eligibility and cost estimates still need confirming.</p>
+        <div class="simple-actions"><button onclick="switchTab('simulator')">Try different numbers →</button><button onclick="switchTab('assumptions')">Review assumptions</button></div>
+        <div class="brief-questions"><details><summary>See the supporting figures</summary><div class="simple-detail">${line('Year 10 wealth — buying',money(r.buyNw))}${line('Year 10 wealth — renting',money(r.rentNw))}${line('Advantage after management-time value',signed(r.adjustedDiff))}${line('Occupancy to break even on wealth',pct(wealth))}${line('Occupancy to cover Year 2 cash outflows',pct(cash))}<p>Year 1 occupancy is 50%. Management time is unvalued unless you enter hours in Assumptions.</p></div></details>
+        <details><summary>What could change the result?</summary><div class="simple-detail">${line('Two occupied rooms: 10-year advantage',signed(run(590000,2/3).diff))}${line('Two occupied rooms: Year 2 cash flow',signed(run(590000,2/3).trajectory[2].buyCf))}${line('8% investment return: advantage',signed(run(590000,.8,.0275,.08).diff))}${line('1% property growth: advantage',signed(run(590000,.8,.01).diff))}${line('7% secondary-loan rate: advantage',signed(run(590000,.8,.0275,.06,.07).diff))}<p>Each changes one assumption. Positive values favour buying. These are scenarios, not predictions.</p></div></details></div>`;
+      document.getElementById('acq-summary').innerHTML='<strong>$590,000 central scenario</strong><p>Property excluding GST: '+money(f.assetPrice)+' · Purchase GST: '+money(f.purchaseGst)+' · Property payment: '+money(f.grossPrice)+'</p><p>Ancillary costs: '+money(f.costs)+' · Total acquisition cash requirement: <strong>'+money(f.settlement)+'</strong></p><p>Cash deployed $400,000 + home redraw $130,000 + permanent secondary loan '+money(f.permanentLoan)+' + temporary GST bridge '+money(f.bridgeInit)+' = total funding '+money(530000+f.totalLoan)+'.</p><p>Assumed GST credit '+money(f.gstCredit)+' repays the bridge after '+a.months+' months. Bridge interest '+money(f.bridgeInterest)+' is charged to Year 1 cash flow. Unrecoverable GST '+money(f.permanentGst)+' stays in permanent borrowing; it does not increase the ex-GST property valuation.</p>';
+      const scenarios=[run(580000),r,run(600000)];
+      const rows=[['Property price excluding GST',x=>x.funding.assetPrice],['Purchase GST at settlement',x=>x.funding.purchaseGst],['Acquisition / fit-out allowances',x=>x.funding.costs],['Total acquisition cash requirement',x=>x.funding.settlement],['Permanent secondary loan',x=>x.funding.permanentLoan],['Temporary GST bridge',x=>x.funding.bridgeInit],['Year 1 cash flow',x=>x.trajectory[1].buyCf],['Year 2 cash flow',x=>x.trajectory[2].buyCf],['Year 10 net wealth',x=>x.buyNw],['Advantage over weekly-room renting',x=>x.diff],['Retained capex reserve',x=>x.trajectory[10].reserveBalance],['Advantage after valuing management time',x=>x.adjustedDiff]];
+      document.getElementById('base-dashboard').innerHTML='<div class="bg-white border rounded-2xl p-6 overflow-x-auto"><h3 class="font-bold mb-3">Acquisition-aware comparison</h3><p class="text-sm mb-4">Renting terminal wealth: '+money(r.rentNw)+'. The purchase price controls use the selected GST basis; values below split out GST.</p><table class="w-full text-sm"><thead><tr><th class="text-left p-2">Metric</th><th>$580k</th><th>$590k</th><th>$600k</th></tr></thead><tbody>'+rows.map(([label,fn])=>'<tr class="border-t"><td class="p-2">'+label+'</td>'+scenarios.map(x=>'<td class="p-2 text-right">'+money(fn(x))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+      document.getElementById('base-property').innerHTML='<div class="bg-white border rounded-2xl p-6 space-y-2"><h3 class="font-bold">Property inputs and funding — $590k central scenario</h3><p class="text-sm">Three external rooms; $300/week plus GST; 50% Year 1 occupancy, 80% thereafter. Home redraw $130,000 at 7%; permanent secondary loan '+money(f.permanentLoan)+' at 1%, equal principal over ten years. Operating expenses $12,000 plus $4,000 annual reserve funding, both growing 3%. Actual spending and retained reserve are shown in the component schedule; retained reserve is included in net wealth.</p><p class="text-sm">Initial debt including bridge '+money(130000+f.totalLoan)+'; initial net wealth '+money(t[0].buyNw)+' including GST receivable '+money(f.gstCredit)+'. Bridge principal is repaid from the GST credit, not deducted again from operating cash flow.</p><p class="text-sm">Year 1 cash flow '+signed(t[1].buyCf)+' including '+money(f.bridgeInterest)+' bridge interest. Year 2 '+signed(t[2].buyCf)+'. Terminal net wealth '+money(r.buyNw)+'.</p><p class="text-xs text-slate-500">The secondary-debt column includes the temporary GST bridge at Year 0; GST recovery and bridge repayment occur within Year 1. Property valuations exclude purchase GST. Transaction credits, duty, sale GST and tax treatment require confirmation.</p></div>';
+    }
+
+    // Populate Tables across Tabs
+    function populateTables() {
+      const res = simulate(590000, 0.80, 300, 0.0275, 0.06, 0.01);
+      
+      // 1. Populate Property Table
+      const pBody = document.getElementById('property-tbody');
+      if (pBody) {
+        pBody.innerHTML = '';
+        res.trajectory.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.className = (row.year === 10) ? 'bg-emerald-50/70 font-bold border-t-2 border-emerald-300' : 'hover:bg-slate-50';
+          tr.innerHTML = `
+            <td class="py-2 px-3 text-center font-semibold text-slate-700">${row.year}</td>
+            <td class="py-2 px-3 text-right">$${Math.round(row.pVal).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-slate-600">$${Math.round(row.hDebt).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-slate-600">$${Math.round(row.sDebt).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-blue-600">${row.year === 0 ? '$0' : '$' + Math.round(row.roomRev).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-slate-500">${row.year === 0 ? '$0' : '$' + Math.round(row.costs).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-slate-500">${row.year === 0 ? '$0' : '$' + Math.round(row.interest).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right text-slate-500">${row.year === 0 ? '$0' : '$' + Math.round(row.prin).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right font-semibold ${row.buyCf < 0 ? 'text-rose-600' : 'text-emerald-600'}">
+              ${row.year === 0 ? '$0' : (row.buyCf < 0 ? '-' : '+') + '$' + Math.abs(Math.round(row.buyCf)).toLocaleString()}
+            </td>
+            <td class="py-2 px-3 text-right text-slate-700">$${Math.round(row.buyEq).toLocaleString()}</td>
+            <td class="py-2 px-3 text-right font-bold text-emerald-800">$${Math.round(row.buyNw).toLocaleString()}</td>
+          `;
+          pBody.appendChild(tr);
+        });
+      }
+
+      // 2. Populate Renting Table
+      const rBody = document.getElementById('rent-tbody');
+      if (rBody) {
+        rBody.innerHTML = '';
+        let openPortfolio = 480000;
+        for (let y = 1; y <= 10; y++) {
+          const row = res.trajectory[y];
+          const rentPaid = row.rentPaid;
+          const returnEarned = openPortfolio * 0.06;
+          const netGrowth = returnEarned - rentPaid;
+          const closePortfolio = row.rentNw;
+
+          const tr = document.createElement('tr');
+          tr.className = (y === 10) ? 'bg-blue-50/70 font-bold border-t-2 border-blue-300' : 'hover:bg-slate-50';
+          tr.innerHTML = `
+            <td class="py-2 px-4 text-center font-semibold text-slate-700">${y}</td>
+            <td class="py-2 px-4 text-right text-slate-700">$${Math.round(openPortfolio).toLocaleString()}</td>
+            <td class="py-2 px-4 text-right text-emerald-600 font-medium">+$${Math.round(returnEarned).toLocaleString()}</td>
+            <td class="py-2 px-4 text-right text-rose-600 font-medium">-$${Math.round(rentPaid).toLocaleString()}</td>
+            <td class="py-2 px-4 text-right font-semibold ${netGrowth >= 0 ? 'text-blue-700' : 'text-rose-700'}">
+              ${netGrowth >= 0 ? '+' : '-'}$${Math.abs(Math.round(netGrowth)).toLocaleString()}
+            </td>
+            <td class="py-2 px-4 text-right font-bold text-blue-900">$${Math.round(closePortfolio).toLocaleString()}</td>
+          `;
+          rBody.appendChild(tr);
+          openPortfolio = closePortfolio;
+        }
+      }
+    }
+
+    // Update Interactive Simulator
+    function updateSimulator() {
+      const price = parseFloat(document.getElementById('input-price').value);
+      const occPct = parseFloat(document.getElementById('input-occ').value);
+      const rent = parseFloat(document.getElementById('input-rent').value);
+      const apprecPct = parseFloat(document.getElementById('input-apprec').value);
+      const eqPct = parseFloat(document.getElementById('input-eq').value);
+      const ownRent = parseFloat(document.getElementById('input-ownrent').value);
+      const growth = parseFloat(document.getElementById('input-growth').value);
+      const recoverable = document.getElementById('input-gst').value === 'yes';
+      document.getElementById('val-ownrent').textContent = '$' + ownRent + ' / wk + GST';
+      document.getElementById('val-growth').textContent = growth.toFixed(1) + '% p.a.';
+      const secPct = parseFloat(document.getElementById('input-sec').value);
+
+      document.getElementById('val-price').textContent = '$' + price.toLocaleString();
+      document.getElementById('val-occ').textContent = occPct.toFixed(0) + '%';
+      document.getElementById('val-rent').textContent = '$' + rent.toFixed(0) + ' / wk + GST';
+      document.getElementById('val-apprec').textContent = apprecPct.toFixed(2) + '% p.a.';
+      document.getElementById('val-eq').textContent = eqPct.toFixed(1) + '% p.a.';
+      document.getElementById('val-sec').textContent = secPct.toFixed(1) + '% p.a.';
+
+      const res = simulate(price, occPct / 100, rent, apprecPct / 100, eqPct / 100, secPct / 100, ownRent, growth / 100, recoverable);
+
+      document.getElementById('sim-buy-nw').textContent = '$' + Math.round(res.buyNw).toLocaleString();
+      document.getElementById('sim-rent-nw').textContent = '$' + Math.round(res.rentNw).toLocaleString();
+
+      const diffVal = Math.round(res.diff);
+      const diffElem = document.getElementById('sim-diff-val');
+      const diffCard = document.getElementById('sim-card-diff');
+      const diffVerdict = document.getElementById('sim-diff-verdict');
+      const analysisText = document.getElementById('sim-analysis-text');
+
+      if (diffVal >= 0) {
+        diffElem.textContent = '+$' + diffVal.toLocaleString();
+        diffCard.className = 'bg-emerald-600 text-white p-5 rounded-xl transition';
+        diffVerdict.textContent = 'Purchasing outperforms renting';
+      } else {
+        diffElem.textContent = '-$' + Math.abs(diffVal).toLocaleString();
+        diffCard.className = 'bg-rose-600 text-white p-5 rounded-xl transition';
+        diffVerdict.textContent = 'Renting & investing outperforms purchasing';
+      }
+
+      const signed = n => (n >= 0 ? '+$' : '-$') + Math.abs(Math.round(n)).toLocaleString();
+      const trial = o => simulate(price, o, rent, apprecPct / 100, eqPct / 100, secPct / 100, ownRent, growth / 100, recoverable);
+      const low = trial(0), high = trial(1);
+      const wealthOcc = (0 - low.diff) / (high.diff - low.diff);
+      const yr2 = res.trajectory[2];
+      const cashOcc = (yr2.costs + yr2.interest + yr2.prin) / (3 * rent * 52 * (1 + growth / 100));
+      const threshold = v => v <= 0 ? '0% (already covered)' : v > 1 ? 'above 100% (unachievable at this rent)' : (v * 100).toFixed(1) + '%';
+      let analysis = `Tenant rent: $${rent}/week + GST; own practice rent: $${ownRent}/week + GST. Buying's 10-year wealth difference is ${signed(res.diff)}. Year 1 cash flow: ${signed(res.trajectory[1].buyCf)}; Year 2: ${signed(yr2.buyCf)}; Year 10: ${signed(res.trajectory[10].buyCf)}. Wealth break-even occupancy (Years 2–10): ${threshold(wealthOcc)}. Year 2 cash-flow break-even including principal repayments: ${threshold(cashOcc)}. Year 1 occupancy stays at 50%. Purchase GST at settlement: ${signed(res.funding.purchaseGst)}; temporary bridge: ${signed(res.funding.bridgeInit)}; permanent secondary loan: ${signed(res.funding.permanentLoan)}. Figures are before tax; GST on own practice rent is ${recoverable ? 'assumed recoverable' : 'included as an unrecoverable cost'}.`;
+      analysis += ' Retained capex reserve: '+signed(res.trajectory[10].reserveBalance)+'. Advantage after valuing management time: '+signed(res.adjustedDiff)+'.';
+      analysisText.textContent = analysis;
+    }
+
+    // Attach event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      refreshBase();
+      populateTables();
+      ['input-price', 'input-occ', 'input-rent', 'input-apprec', 'input-eq', 'input-sec', 'input-ownrent', 'input-growth', 'input-gst'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateSimulator);
+      });
+      ['spent','reserve-return','hours','hour-value','time-weeks'].forEach(id=>document.getElementById('component-'+id).addEventListener('input',()=>{refreshBase();populateTables();updateSimulator();}));
+      ['duty','legal','inspection','finance','fitout','contingency','basis','credit','months','bridge'].forEach(id => {
+        const el=document.getElementById('acq-'+id);
+        el.addEventListener('input',()=>{refreshBase();populateTables();updateSimulator();});
+      });
+      updateSimulator();
+    });
+  </script>
+</body>
+</html>
+
